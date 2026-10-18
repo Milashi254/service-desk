@@ -1,6 +1,8 @@
+from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django import forms
+
+from .models import ServiceRequest
 
 
 class RegisterForm(UserCreationForm):
@@ -11,3 +13,12 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'email')
+
+
+class ServiceRequestForm(forms.ModelForm):
+    """Form a citizen fills in to report a problem."""
+
+    class Meta:
+        model = ServiceRequest
+        fields = ('category', 'location', 'description', 'image')
+        widgets = {'description': forms.Textarea(attrs={'rows': 4})}
