@@ -22,3 +22,11 @@ class ServiceRequestForm(forms.ModelForm):
         model = ServiceRequest
         fields = ('category', 'location', 'description', 'image')
         widgets = {'description': forms.Textarea(attrs={'rows': 4})}
+        
+
+class StatusForm(forms.ModelForm):
+    """Lets staff change the status of a request."""
+
+    class Meta:
+        model = ServiceRequest
+        fields = ('status',)

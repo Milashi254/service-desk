@@ -3,9 +3,10 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import RegisterForm, ServiceRequestForm
+from .decorators import staff_required
+from .forms import RegisterForm, ServiceRequestForm, StatusForm
 from .models import ServiceRequest
-
+from .stats import request_stats
 
 @login_required
 def home(request):
@@ -51,3 +52,40 @@ def request_detail(request, pk):
     """Show one request. Citizens can only open their own."""
     service_request = get_object_or_404(ServiceRequest, pk=pk, user=request.user)
     return render(request, 'services/request_detail.html', {'service_request': service_request})
+
+
+@staff_required
+def admin_dashboard(request):
+    """Staff-only list of all requests, with status and category filters."""
+    requests_list = ServiceRequest.objects.select_related('user')
+    status = request.GET.get('status', '')
+    category = request.GET.get('category', '')
+    if status in ServiceRequest.Status.values:
+        requests_list = requests_list.filter(status=status)
+    if category in ServiceRequest.Category.values:
+        requests_list = requests_list.filter(category=category)
+    context = {
+        'requests_list': requests_list,
+        'statuses': ServiceRequest.Status.choices,
+        'categories': ServiceRequest.Category.choices,
+        'selected_status': status,
+        'selected_category': category,
+                'stats': request_stats(),
+    }
+    return render(request, 'services/admin_dashboard.html', context)
+
+
+@staff_required
+def admin_request_detail(request, pk):
+    """Staff view of any request, with a form to change its status."""
+    service_request = get_object_or_404(ServiceRequest, pk=pk)
+    form = StatusForm(request.POST or None, instance=service_request)
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'Status updated.')
+        return redirect('admin_request_detail', pk=pk)
+    return render(
+        request,
+        'services/admin_request_detail.html',
+        {'service_request': service_request, 'form': form},
+    )

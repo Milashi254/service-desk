@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Admin dashboard{% endblock %}
+{% block main_class %}page-wide{% endblock %}
+{% block content %}
+  <h1 class="h4 mb-3">Admin dashboard</h1>
+  <form method="get" class="row g-2 mb-3">
+    <div class="col-sm-4">
+      <select name="status" aria-label="Filter by status">
+        <option value="">All statuses</option>
+        {% for value, label in statuses %}
+          <option value="{{ value }}" {% if value == selected_status %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-sm-4">
+      <select name="category" aria-label="Filter by category">
+        <option value="">All categories</option>
+        {% for value, label in categories %}
+          <option value="{{ value }}" {% if value == selected_category %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-sm-4 d-flex gap-2">
+      <button type="submit" class="btn btn-success">Filter</button>
+      <a href="{% url 'admin_dashboard' %}" class="btn btn-outline-secondary">Reset</a>
+    </div>
+  </form>
+  <div class="table-responsive">
+    <table class="table table-hover bg-white align-middle">
+      <thead>
+        <tr><th>#</th><th>Category</th><th>Location</th><th>Citizen</th><th>Status</th><th>Submitted</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for item in requests_list %}
+          <tr>
+            <td>{{ item.pk }}</td>
+            <td>{{ item.get_category_display }}</td>
+            <td>{{ item.location }}</td>
+            <td>{{ item.user.username }}</td>
+            <td>{% include 'services/_status_badge.html' %}</td>
+            <td>{{ item.created_at|date:"j M Y" }}</td>
+            <td><a class="btn btn-sm btn-outline-success" href="{% url 'admin_request_detail' item.pk %}">Manage</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="text-center text-muted py-4">No requests match these filters.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

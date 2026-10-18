@@ -13,6 +13,8 @@
     form p { margin-bottom: 1rem; }
     .helptext { font-size: .85rem; color: #6c757d; }
     .errorlist { color: #b02a37; list-style: none; padding-left: 0; font-size: .9rem; }
+        .page-narrow { max-width: 720px; }
+    .page-wide { max-width: 1000px; }
   </style>
 </head>
 <body class="bg-light">
@@ -21,6 +23,7 @@
       <a class="navbar-brand" href="{% url 'home' %}">Public Service Desk</a>
       <div class="d-flex gap-2 align-items-center">
         {% if user.is_authenticated %}
+                  {% if user.is_staff %}<a class="btn btn-sm btn-warning" href="{% url 'admin_dashboard' %}">Dashboard</a>{% endif %}
                   <a class="btn btn-sm btn-outline-light" href="{% url 'submit_request' %}">New request</a>
           <a class="btn btn-sm btn-outline-light" href="{% url 'my_requests' %}">My requests</a>
           <span class="text-white small">Hi, {{ user.username }}</span>
@@ -35,7 +38,7 @@
       </div>
     </div>
   </nav>
-  <main class="container pb-5" style="max-width: 720px;">
+      <main class="container pb-5 {% block main_class %}page-narrow{% endblock %}">
     {% for message in messages %}
       <div class="alert alert-success">{{ message }}</div>
     {% endfor %}
