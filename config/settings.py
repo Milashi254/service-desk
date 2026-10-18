@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-$a4iop-mox3okj76t5a(s*jrx_8v6u536+4g3%45jr%2)4edib
 DEBUG = True
 
 ALLOWED_HOSTS = ['milashi254.pythonanywhere.com', '127.0.0.1', 'localhost']
-
+CSRF_TRUSTED_ORIGINS = ['https://milashi254.pythonanywhere.com']
 
 # Application definition
 
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'services',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +55,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,3 +126,6 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
