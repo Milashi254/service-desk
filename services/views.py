@@ -8,9 +8,10 @@ from .models import ServiceRequest
 from .stats import request_stats
 
 
-@citizen_required
 def home(request):
-    """Landing page for citizens after login (staff go to the dashboard)."""
+    """Public landing page. Staff are sent straight to the dashboard."""
+    if request.user.is_staff:
+        return redirect('admin_dashboard')
     return render(request, 'home.html')
 
 
@@ -30,7 +31,11 @@ def register(request):
 @citizen_required
 def submit_request(request):
     """Show and process the form for a new service request."""
-    form = ServiceRequestForm(request.POST or None, request.FILES or None)
+    form = ServiceRequestForm(
+        request.POST or None,
+        request.FILES or None,
+        initial={'category': request.GET.get('category', '')},
+    )
     if form.is_valid():
         service_request = form.save(commit=False)
         service_request.user = request.user

@@ -1,19 +1,78 @@
 {% extends 'base.html' %}
 {% block title %}Home{% endblock %}
-{% block content %}
-  <div class="card p-4 mb-4 border-success">
-    <h1 class="h3">Welcome, {{ user.username }}</h1>
-    <p class="text-muted mb-3">Report a problem in your area, such as a broken streetlight, a water issue or uncollected garbage, and follow it until it is resolved.</p>
-    <div class="d-flex flex-wrap gap-2">
-      <a class="btn btn-success" href="{% url 'submit_request' %}">Submit a request</a>
-      <a class="btn btn-outline-success" href="{% url 'my_requests' %}">My requests</a>
-      {% if user.is_staff %}<a class="btn btn-warning" href="{% url 'admin_dashboard' %}">Open dashboard</a>{% endif %}
+{% block page %}
+  <style>
+    .hero { background: linear-gradient(135deg, #0b3d2e 0%, #14654a 100%); }
+    .service-panel { background: rgba(0, 0, 0, .28); border-radius: 1.25rem; }
+    .search-wrap { position: relative; }
+    .search-wrap i { position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%); color: #6c757d; }
+    .search-wrap input { width: 100%; padding: .85rem 1.2rem .85rem 2.8rem; border: 0; border-radius: 999px; }
+    .tile { display: flex; flex-direction: column; align-items: center; gap: .5rem; color: #fff;
+            text-decoration: none; font-weight: 600; font-size: .9rem; padding: .75rem .25rem; border-radius: .75rem; }
+    .tile i { font-size: 2rem; }
+    .tile:hover, .tile:focus-visible { background: rgba(255, 255, 255, .15); color: #fff; }
+  </style>
+
+  <section class="hero text-white">
+    <div class="container py-5">
+      <h1 class="display-5 fw-bold mb-2">Public services, simplified.</h1>
+      <p class="lead mb-4">Report a problem in your area and follow it until it is resolved.</p>
+      <div class="service-panel p-3 p-md-4">
+        <div class="search-wrap mb-4">
+          <i class="bi bi-search"></i>
+          <input id="serviceSearch" type="search" placeholder="Type a problem, e.g. streetlight, water, garbage" aria-label="Search services">
+        </div>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3 text-center">
+          <div class="col service-tile" data-name="streetlight light lamp dark">
+            <a class="tile" href="{% url 'submit_request' %}?category=streetlight"><i class="bi bi-lightbulb"></i><span>Broken streetlight</span></a>
+          </div>
+          <div class="col service-tile" data-name="water pipe leak supply">
+            <a class="tile" href="{% url 'submit_request' %}?category=water"><i class="bi bi-droplet"></i><span>Water issue</span></a>
+          </div>
+          <div class="col service-tile" data-name="garbage rubbish waste bins collection">
+            <a class="tile" href="{% url 'submit_request' %}?category=garbage"><i class="bi bi-trash3"></i><span>Garbage collection</span></a>
+          </div>
+          <div class="col service-tile" data-name="road pothole street damage">
+            <a class="tile" href="{% url 'submit_request' %}?category=road"><i class="bi bi-cone-striped"></i><span>Road or pothole</span></a>
+          </div>
+          <div class="col service-tile" data-name="other something else problem">
+            <a class="tile" href="{% url 'submit_request' %}?category=other"><i class="bi bi-three-dots"></i><span>Other problem</span></a>
+          </div>
+          <div class="col service-tile" data-name="track status my requests follow">
+            <a class="tile" href="{% url 'my_requests' %}"><i class="bi bi-list-check"></i><span>Track my requests</span></a>
+          </div>
+        </div>
+        <p id="noMatch" class="text-white text-center mt-3 mb-0" hidden>No matching service. Try “water” or “road”.</p>
+      </div>
     </div>
-  </div>
-  <h2 class="h6 text-muted text-uppercase mb-2">How it works</h2>
-  <div class="row g-3 text-center">
-    <div class="col-12 col-sm-4"><div class="card p-3 h-100"><span class="badge bg-secondary mb-2 align-self-center">Pending</span><div class="small text-muted">You submit a request and it waits to be reviewed.</div></div></div>
-    <div class="col-12 col-sm-4"><div class="card p-3 h-100"><span class="badge bg-warning text-dark mb-2 align-self-center">In Progress</span><div class="small text-muted">The service team is working on it.</div></div></div>
-    <div class="col-12 col-sm-4"><div class="card p-3 h-100"><span class="badge bg-success mb-2 align-self-center">Resolved</span><div class="small text-muted">The problem is fixed and the request is closed.</div></div></div>
-  </div>
+  </section>
+
+  <section class="container py-5">
+    <h2 class="h5 text-center mb-4">How it works</h2>
+    <div class="row g-3 text-center">
+      <div class="col-12 col-md-4"><div class="card p-3 h-100"><span class="badge bg-secondary mb-2 align-self-center">Pending</span><div class="small text-muted">You submit a request and it waits to be reviewed.</div></div></div>
+      <div class="col-12 col-md-4"><div class="card p-3 h-100"><span class="badge bg-warning text-dark mb-2 align-self-center">In Progress</span><div class="small text-muted">The service team is working on it.</div></div></div>
+      <div class="col-12 col-md-4"><div class="card p-3 h-100"><span class="badge bg-success mb-2 align-self-center">Resolved</span><div class="small text-muted">The problem is fixed and the request is closed.</div></div></div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    const search = document.getElementById('serviceSearch');
+    const tiles = document.querySelectorAll('.service-tile');
+    const noMatch = document.getElementById('noMatch');
+
+    search.addEventListener('input', () => {
+      const query = search.value.trim().toLowerCase();
+      let shown = 0;
+      tiles.forEach(tile => {
+        const text = (tile.dataset.name + ' ' + tile.textContent).toLowerCase();
+        const match = !query || text.includes(query);
+        tile.hidden = !match;
+        if (match) shown++;
+      });
+      noMatch.hidden = shown > 0;
+    });
+  </script>
 {% endblock %}
