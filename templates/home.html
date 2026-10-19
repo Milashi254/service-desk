@@ -1,5 +1,19 @@
 {% extends 'base.html' %}
+{% block title %}Home{% endblock %}
 {% block content %}
-  <h1 class="h3">Welcome, {{ user.username }}</h1>
-  <p class="text-muted">Report a problem in your area and follow it until it is resolved.</p>
+  <div class="card p-4 mb-4 border-success">
+    <h1 class="h3">Welcome, {{ user.username }}</h1>
+    <p class="text-muted mb-3">Report a problem in your area, such as a broken streetlight, a water issue or uncollected garbage, and follow it until it is resolved.</p>
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-success" href="{% url 'submit_request' %}">Submit a request</a>
+      <a class="btn btn-outline-success" href="{% url 'my_requests' %}">My requests</a>
+      {% if user.is_staff %}<a class="btn btn-warning" href="{% url 'admin_dashboard' %}">Open dashboard</a>{% endif %}
+    </div>
+  </div>
+  <h2 class="h6 text-muted text-uppercase mb-2">How it works</h2>
+  <div class="row g-3 text-center">
+    <div class="col-12 col-sm-4"><div class="card p-3 h-100"><span class="badge bg-secondary mb-2 align-self-center">Pending</span><div class="small text-muted">You submit a request and it waits to be reviewed.</div></div></div>
+    <div class="col-12 col-sm-4"><div class="card p-3 h-100"><span class="badge bg-warning text-dark mb-2 align-self-center">In Progress</span><div class="small text-muted">The service team is working on it.</div></div></div>
+    <div class="col-12 col-sm-4"><div class="card p-3 h-100"><span class="badge bg-success mb-2 align-self-center">Resolved</span><div class="small text-muted">The problem is fixed and the request is closed.</div></div></div>
+  </div>
 {% endblock %}

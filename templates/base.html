@@ -21,7 +21,7 @@
   <nav class="navbar navbar-dark bg-success mb-4">
     <div class="container">
       <a class="navbar-brand" href="{% url 'home' %}">Public Service Desk</a>
-      <div class="d-flex gap-2 align-items-center">
+            <div class="d-flex flex-wrap gap-2 align-items-center">
         {% if user.is_authenticated %}
                   {% if user.is_staff %}<a class="btn btn-sm btn-warning" href="{% url 'admin_dashboard' %}">Dashboard</a>{% endif %}
                   <a class="btn btn-sm btn-outline-light" href="{% url 'submit_request' %}">New request</a>
@@ -43,6 +43,8 @@
       <div class="alert alert-success">{{ message }}</div>
     {% endfor %}
     {% block content %}{% endblock %}
+      <footer class="text-center text-muted small pb-4">Public Service Desk · Student project</footer>
   </main>
+    {% block scripts %}{% endblock %}
 </body>
 </html>
