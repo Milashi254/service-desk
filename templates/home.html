@@ -1,8 +1,19 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Home{% endblock %}
 {% block page %}
   <style>
-    .hero { background: linear-gradient(135deg, #0b3d2e 0%, #14654a 100%); }
+    .home-bg {
+      background-color: #0b3d2e;
+      background-image:
+        linear-gradient(135deg, rgba(11, 61, 46, .80), rgba(20, 101, 74, .70)),
+        url("{% static 'images/hero.jpg' %}");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: calc(100vh - 57px);
+    }
+    @media (max-width: 768px) { .home-bg { background-attachment: scroll; } }
     .service-panel { background: rgba(0, 0, 0, .28); border-radius: 1.25rem; }
     .search-wrap { position: relative; }
     .search-wrap i { position: absolute; left: 1.1rem; top: 50%; transform: translateY(-50%); color: #6c757d; }
@@ -13,8 +24,8 @@
     .tile:hover, .tile:focus-visible { background: rgba(255, 255, 255, .15); color: #fff; }
   </style>
 
-  <section class="hero text-white">
-    <div class="container py-5">
+  <div class="home-bg">
+    <section class="container py-5 text-white">
       <h1 class="display-5 fw-bold mb-2">Public services, simplified.</h1>
       <p class="lead mb-4">Report a problem in your area and follow it until it is resolved.</p>
       <div class="service-panel p-3 p-md-4">
@@ -44,17 +55,17 @@
         </div>
         <p id="noMatch" class="text-white text-center mt-3 mb-0" hidden>No matching service. Try “water” or “road”.</p>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="container py-5">
-    <h2 class="h5 text-center mb-4">How it works</h2>
-    <div class="row g-3 text-center">
-      <div class="col-12 col-md-4"><div class="card p-3 h-100"><span class="badge bg-secondary mb-2 align-self-center">Pending</span><div class="small text-muted">You submit a request and it waits to be reviewed.</div></div></div>
-      <div class="col-12 col-md-4"><div class="card p-3 h-100"><span class="badge bg-warning text-dark mb-2 align-self-center">In Progress</span><div class="small text-muted">The service team is working on it.</div></div></div>
-      <div class="col-12 col-md-4"><div class="card p-3 h-100"><span class="badge bg-success mb-2 align-self-center">Resolved</span><div class="small text-muted">The problem is fixed and the request is closed.</div></div></div>
-    </div>
-  </section>
+    <section class="container pt-3 pb-5">
+      <h2 class="h5 text-center text-white mb-4">How it works</h2>
+      <div class="row g-3 text-center">
+        <div class="col-12 col-md-4"><div class="card p-3 h-100"><span class="badge bg-secondary mb-2 align-self-center">Pending</span><div class="small text-muted">You submit a request and it waits to be reviewed.</div></div></div>
+        <div class="col-12 col-md-4"><div class="card p-3 h-100"><span class="badge bg-warning text-dark mb-2 align-self-center">In Progress</span><div class="small text-muted">The service team is working on it.</div></div></div>
+        <div class="col-12 col-md-4"><div class="card p-3 h-100"><span class="badge bg-success mb-2 align-self-center">Resolved</span><div class="small text-muted">The problem is fixed and the request is closed.</div></div></div>
+      </div>
+    </section>
+  </div>
 {% endblock %}
 
 {% block scripts %}
