@@ -3,7 +3,8 @@ from django.core.management.base import BaseCommand
 
 from services.models import ServiceRequest
 
-DEMO_PASSWORD = 'DemoPass2026!'
+CITIZEN_USERNAME, CITIZEN_PASSWORD = 'Milka', 'Milka2026'
+ADMIN_USERNAME, ADMIN_PASSWORD = 'admin', 'admin2026'
 
 # (category, location, description, status)
 SAMPLE_REQUESTS = [
@@ -21,15 +22,25 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         User = get_user_model()
+
+        # Older versions used 'demo_citizen' and 'demo_admin'. Rename the citizen
+        # (keeping its requests) and remove the old demo admin.
+        if not User.objects.filter(username=CITIZEN_USERNAME).exists():
+            User.objects.filter(username='demo_citizen').update(username=CITIZEN_USERNAME)
+        User.objects.filter(username='demo_admin').delete()
+
         citizen, _ = User.objects.get_or_create(
-            username='demo_citizen', defaults={'email': 'citizen@example.com'}
+            username=CITIZEN_USERNAME, defaults={'email': 'citizen@example.com'}
         )
         admin, _ = User.objects.get_or_create(
-            username='demo_admin', defaults={'email': 'admin@example.com'}
+            username=ADMIN_USERNAME, defaults={'email': 'admin@example.com'}
         )
+
+        citizen.is_staff = False
         admin.is_staff = True
-        for user in (citizen, admin):
-            user.set_password(DEMO_PASSWORD)
+        admin.is_superuser = False  # the public demo admin can only use the dashboard
+        for user, password in ((citizen, CITIZEN_PASSWORD), (admin, ADMIN_PASSWORD)):
+            user.set_password(password)
             user.save()
 
         if not ServiceRequest.objects.filter(user=citizen).exists():
