@@ -23,9 +23,12 @@
       <a class="navbar-brand" href="{% url 'home' %}">Public Service Desk</a>
             <div class="d-flex flex-wrap gap-2 align-items-center">
         {% if user.is_authenticated %}
-                  {% if user.is_staff %}<a class="btn btn-sm btn-warning" href="{% url 'admin_dashboard' %}">Dashboard</a>{% endif %}
-                  <a class="btn btn-sm btn-outline-light" href="{% url 'submit_request' %}">New request</a>
-          <a class="btn btn-sm btn-outline-light" href="{% url 'my_requests' %}">My requests</a>
+                        {% if user.is_staff %}
+            <a class="btn btn-sm btn-warning" href="{% url 'admin_dashboard' %}">Dashboard</a>
+          {% else %}
+            <a class="btn btn-sm btn-outline-light" href="{% url 'submit_request' %}">New request</a>
+            <a class="btn btn-sm btn-outline-light" href="{% url 'my_requests' %}">My requests</a>
+          {% endif %}
           <span class="text-white small">Hi, {{ user.username }}</span>
           <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}

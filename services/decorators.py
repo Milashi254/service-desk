@@ -2,6 +2,7 @@ from functools import wraps
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import redirect
 
 
 def staff_required(view_func):
@@ -12,6 +13,19 @@ def staff_required(view_func):
     def wrapper(request, *args, **kwargs):
         if not request.user.is_staff:
             raise PermissionDenied
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
+
+def citizen_required(view_func):
+    """Allow only logged-in citizens; staff are sent to the admin dashboard."""
+
+    @login_required
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if request.user.is_staff:
+            return redirect('admin_dashboard')
         return view_func(request, *args, **kwargs)
 
     return wrapper

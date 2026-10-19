@@ -1,16 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .decorators import staff_required
+from .decorators import citizen_required, staff_required
 from .forms import RegisterForm, ServiceRequestForm, StatusForm
 from .models import ServiceRequest
 from .stats import request_stats
 
-@login_required
+
+@citizen_required
 def home(request):
-    """Landing page shown after login."""
+    """Landing page for citizens after login (staff go to the dashboard)."""
     return render(request, 'home.html')
 
 
@@ -27,7 +27,7 @@ def register(request):
     return render(request, 'registration/register.html', {'form': form})
 
 
-@login_required
+@citizen_required
 def submit_request(request):
     """Show and process the form for a new service request."""
     form = ServiceRequestForm(request.POST or None, request.FILES or None)
@@ -40,14 +40,14 @@ def submit_request(request):
     return render(request, 'services/submit_request.html', {'form': form})
 
 
-@login_required
+@citizen_required
 def my_requests(request):
     """List the logged-in citizen's own requests, newest first."""
     requests_list = ServiceRequest.objects.filter(user=request.user)
     return render(request, 'services/my_requests.html', {'requests_list': requests_list})
 
 
-@login_required
+@citizen_required
 def request_detail(request, pk):
     """Show one request. Citizens can only open their own."""
     service_request = get_object_or_404(ServiceRequest, pk=pk, user=request.user)
@@ -70,7 +70,7 @@ def admin_dashboard(request):
         'categories': ServiceRequest.Category.choices,
         'selected_status': status,
         'selected_category': category,
-                'stats': request_stats(),
+        'stats': request_stats(),
     }
     return render(request, 'services/admin_dashboard.html', context)
 
