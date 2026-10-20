@@ -111,7 +111,7 @@ Optional: run `python manage.py createsuperuser` with a different username (for 
 ## Known limitations
 
 - SQLite and local file storage suit a demo, not heavy traffic
-- No email notifications or password reset
+- No email-based password reset. Forgotten passwords are reset by an administrator
 - The demo accounts are public, so do not use them for real data
 
 ## Credits
