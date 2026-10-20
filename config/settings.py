@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,11 +20,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$a4iop-mox3okj76t5a(s*jrx_8v6u536+4g3%45jr%2)4edib'
+# Secrets come from the environment; this fallback is for local development only.
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-only-secret-key-change-me')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Debug mode is on locally; the live site switches it off in its WSGI file.
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['milashi254.pythonanywhere.com', '127.0.0.1', 'localhost']
 CSRF_TRUSTED_ORIGINS = ['https://milashi254.pythonanywhere.com']

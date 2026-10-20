@@ -116,5 +116,5 @@ Optional: run `python manage.py createsuperuser` with a different username (for 
 
 ## Credits
 
-- Landing page background photo by microdroneafrica on [Unsplash](https://unsplash.com), used under the [Unsplash License](https://unsplash.com/license)
+- Landing page background photo from [Unsplash](https://unsplash.com), used under the [Unsplash License](https://unsplash.com/license)
 - Styling and icons: Bootstrap 5 and Bootstrap Icons. Charts: Chart.js
